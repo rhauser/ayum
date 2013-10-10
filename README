@@ -3,6 +3,9 @@
 
    git clone https://github.com/rhauser/ayum.git
 
+   # as root on your machine
+   yum install yum-plugin-downloadonly
+
 2. Edit the ayum shell script
 
    You should adapt the four variables:
