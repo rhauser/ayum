@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+# Wrapper around yum --downloadonly plus rpm with private database
+#
+
+# 
+# Configuration
+# 
+
+# The private RPM database location
+#
+# The actual database will be in $AYUM_DBPATH/var/lib/rpm
+#
+export AYUM_DBPATH=/work/msu-pc7/rhauser/ytest/mydb
+
+# The download cache directory
+export AYUM_CACHE=/work/msu-pc7/rhauser/ytest/cache
+
+# Software installation area
+export AYUM_INSTALL_AREA=/work/msu-pc7/rhauser/ytest/sw
+
+# The yum.conf file
+export AYUM_CONF=/work/msu-pc7/rhauser/ytest/yum.conf
+
+# automatic
+export AYUM_DIR=`python -c "from os.path import abspath, dirname; print dirname(abspath('$0'))"`
+
+#
+# Check for special initdb command
+#
+if [ "$1" == "initdb" ]
+then
+    if [ -f $AYUM_DBPATH/var/lib/rpm/__db.001 ]
+    then
+        echo "RPM database already exists at $AYUM_DBPATH/var/lib/rpm/"
+        exit 0
+    fi
+    mkdir -p $AYUM_DBPATH/var/lib/rpm && rpm --dbpath  $AYUM_DBPATH/var/lib/rpm --initdb
+    exit $?
+fi
+
+RPM_OPTIONS=""
+DOWNLOAD_OPTIONS="--downloadonly --downloaddir=$AYUM_CACHE"
+
+for arg in $*
+do
+    case $arg in
+        install)
+            RPM_OPTIONS=-ihv
+            break
+            ;;
+        update)
+            RPM_OPTIONS=-Uhv
+            break
+            ;;
+        remove|erase)
+            # DOWNLOAD_OPTIONS=""
+            ;;
+        *)
+            ;;
+    esac
+done
+
+rm -f $AYUM_CACHE/*
+
+$AYUM_DIR/yum.private -c $AYUM_CONF --installroot=$AYUM_DBPATH $DOWNLOAD_OPTIONS $*
+
+if [ ! -z "$RPM_OPTIONS" ]; then
+    if [ ! -z `/bin/ls $AYUM_CACHE` ]
+    then
+        rpm --dbpath $AYUM_DBPATH/var/lib/rpm --prefix=$AYUM_INSTALL_AREA $RPM_OPTIONS $AYUM_CACHE/*
+    fi
+fi
