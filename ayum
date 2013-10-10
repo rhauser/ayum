@@ -73,7 +73,15 @@ rm -f $AYUM_CACHE/*
 
 AYUM_OUT=`mktemp`
 
-$AYUM_DIR/yum.private -c $AYUM_CONF --installroot=$AYUM_DBPATH --downloadonly --downloaddir=$AYUM_CACHE $* | tee $AYUM_OUT
+case "${RPM_OPTIONS}" in
+    -e)
+        # we only need the output in the case of the erase command
+        $AYUM_DIR/yum.private -c $AYUM_CONF --installroot=$AYUM_DBPATH --downloadonly --downloaddir=$AYUM_CACHE $* | tee $AYUM_OUT
+        ;;
+    *)
+        # in the other cases having terminal control is more useful
+        $AYUM_DIR/yum.private -c $AYUM_CONF --installroot=$AYUM_DBPATH --downloadonly --downloaddir=$AYUM_CACHE $*
+esac
 
 trap 'rm -f $AYUM_OUT' 0
 
