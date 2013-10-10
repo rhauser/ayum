@@ -60,6 +60,10 @@ do
             RPM_OPTIONS=-e
             break
             ;;
+        shell)
+            echo "The 'ayum shell' command will not work properly"
+            exit 1
+            ;;
         *)
             ;;
     esac
