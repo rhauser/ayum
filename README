@@ -1,11 +1,7 @@
 
 1. Get the software
 
-   git clone /afs/cern.ch/work/r/rhauser/public/ayum
-
-   Or just 
-
-   cp -r /afs/cern.ch/work/r/rhauser/public/ayum .
+   git clone https://github.com/rhauser/ayum.git
 
 2. Edit the ayum shell script
 
