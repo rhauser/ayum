@@ -1,0 +1,42 @@
+
+1. Get the software
+
+   git clone /afs/cern.ch/work/r/rhauser/public/ayum
+
+   Or just 
+
+   cp -r /afs/cern.ch/work/r/rhauser/public/ayum .
+
+2. Edit the ayum shell script
+
+   You should adapt the four variables:
+
+   AYUM_DBPATH
+   AYUM_CACHE
+   AYUM_INSTALL_AREA
+
+   Optionally: AYUM_CONF or just use the yum.conf file
+   in the package and modify it as you like.
+
+3. Either put the package into your path:
+ 
+   export PATH=/path/to/ayum:$PATH
+
+   or use the full path name in the following where the 'ayum'
+   command is used.
+
+4. Enjoy
+
+   ayum list
+   ayum list available
+   ayum shell (quit to exit)
+   ayum install -y tdaq-04-00-01_DAQRelease_i686-slc5-gcc43-opt
+   ayum update
+   ayum list installed
+
+   ...and so on, all yum commands
+
+   ayum remove tdaq-04-00-01-*
+
+
+   
