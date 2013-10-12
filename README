@@ -11,8 +11,10 @@
    You should adapt the four variables:
 
    AYUM_DBPATH
-   AYUM_CACHE
    AYUM_INSTALL_AREA
+
+   Optionally: AYUM_CACHE or the ./cache subdirectory
+   is used instead.
 
    Optionally: AYUM_CONF or just use the yum.conf file
    in the package and modify it as you like.
