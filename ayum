@@ -16,32 +16,17 @@ export AYUM_DIR=`python -c "from os.path import abspath, dirname; print dirname(
 
 #
 # The private RPM database location
-# The actual database will be in $AYUM_DBPATH/var/lib/rpm
 #
-export AYUM_DBPATH=/work/msu-pc7/rhauser/ytest/mydb
-
-# The download cache directory
-export AYUM_CACHE=/work/msu-pc7/rhauser/ytest/cache
+export AYUM_DBPATH=/work/msu-pc7/rhauser/install/db
 
 # Software installation area
-export AYUM_INSTALL_AREA=/work/msu-pc7/rhauser/ytest/sw
+export AYUM_INSTALL_AREA=/work/msu-pc7/rhauser/install/sw
+
+# The download cache directory, inside the ayum directory by default
+export AYUM_CACHE=$AYUM_DIR/cache
 
 # The yum.conf file, take the one from this package by default
 export AYUM_CONF=$AYUM_DIR/yum.conf
-
-#
-# Check for special initdb command
-#
-if [ "$1" == "initdb" ]
-then
-    if [ -f $AYUM_DBPATH/var/lib/rpm/__db.001 ]
-    then
-        echo "RPM database already exists at $AYUM_DBPATH/var/lib/rpm/"
-        exit 0
-    fi
-    mkdir -p $AYUM_DBPATH/var/lib/rpm && rpm --dbpath  $AYUM_DBPATH/var/lib/rpm --initdb
-    exit $?
-fi
 
 RPM_OPTIONS=""
 
@@ -76,11 +61,11 @@ AYUM_OUT=`mktemp`
 case "${RPM_OPTIONS}" in
     -e)
         # we only need the output in the case of the erase command
-        $AYUM_DIR/yum.private -c $AYUM_CONF --installroot=$AYUM_DBPATH --downloadonly --downloaddir=$AYUM_CACHE $* | tee $AYUM_OUT
+        $AYUM_DIR/yum.private -c $AYUM_CONF --downloadonly --downloaddir=$AYUM_CACHE $* | tee $AYUM_OUT
         ;;
     *)
         # in the other cases having terminal control is more useful
-        $AYUM_DIR/yum.private -c $AYUM_CONF --installroot=$AYUM_DBPATH --downloadonly --downloaddir=$AYUM_CACHE $*
+        $AYUM_DIR/yum.private -c $AYUM_CONF --downloadonly --downloaddir=$AYUM_CACHE $*
 esac
 
 trap 'rm -f $AYUM_OUT' 0
@@ -91,13 +76,13 @@ case "${RPM_OPTIONS}" in
         ;;
     -e*)
         # erase
-        rpm --dbpath  $AYUM_DBPATH/var/lib/rpm ${RPM_OPTIONS} $(grep '\--->' $AYUM_OUT | awk '{ print $3; }')
+        rpm --dbpath  $AYUM_DBPATH ${RPM_OPTIONS} $(grep '\--->' $AYUM_OUT | awk '{ print $3; }')
         ;;
     *)
         # install or update
         if [ ! -z `/bin/ls $AYUM_CACHE | head -1` ]
         then
-            rpm --dbpath $AYUM_DBPATH/var/lib/rpm --prefix=$AYUM_INSTALL_AREA $RPM_OPTIONS $AYUM_CACHE/*
+            rpm --dbpath $AYUM_DBPATH --prefix=$AYUM_INSTALL_AREA $RPM_OPTIONS $AYUM_CACHE/*
         fi
         ;;
 esac

@@ -17,18 +17,14 @@
    Optionally: AYUM_CONF or just use the yum.conf file
    in the package and modify it as you like.
 
-3. Once run
-
-   ayum initdb
-
-4. Either put the package into your path:
+3. Either put the package into your path:
  
    export PATH=/path/to/ayum:$PATH
 
    or use the full path name in the following where the 'ayum'
    command is used.
 
-5. Enjoy
+4. Enjoy
 
    ayum list
    ayum list available
