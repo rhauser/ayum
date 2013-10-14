@@ -1,6 +1,5 @@
 #!/usr/bin/python
 import sys
-import os
 import os.path
 try:
     import yum
@@ -27,9 +26,6 @@ the yum faq at:
 
 sys.path.insert(0, '/usr/share/yum-cli')
 sys.path.insert(0, os.path.dirname(os.path.abspath(sys.argv[0])) + '/yum-cli')
-
-from rpm import addMacro
-#addMacro('_dbpath',os.environ['AYUM_DBPATH'])
 
 try:
     import yummain
