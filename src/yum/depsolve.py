@@ -223,7 +223,7 @@ class Depsolve(object):
                         txmbr.ts_state = 'i'
                         txmbr.output_state = TS_INSTALL
 
-                if hasattr(self.conf.prefix):
+                if hasattr(self.conf,'prefix'):
                     self.ts.addInstall(hdr, (hdr, rpmfile), txmbr.ts_state, self.conf.prefix)
                 else:
                     self.ts.addInstall(hdr, (hdr, rpmfile), txmbr.ts_state)

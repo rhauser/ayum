@@ -10,8 +10,6 @@ from rpm._rpm import ts as _rpmts
 #
 def addInstall(self, item, key, how='u', prefix = None):
 
-    print type(self)
-
     if isinstance(item, str):
         f = file(item)
         header = self.hdrFromFdno(f)
@@ -30,7 +28,6 @@ def addInstall(self, item, key, how='u', prefix = None):
         prefixes = header['prefixes']
         if len(prefixes) > 0:
             oldpath = prefixes[0]
-            print "Relocating: ",oldpath,"=>",prefix,'for package',header['name']
             if not _rpmext.addInstall(self, header, key, upgrade, oldpath, prefix):
                 raise rpm.error("adding package to transaction failed")
             return

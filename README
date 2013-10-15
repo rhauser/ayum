@@ -3,25 +3,37 @@
 
    git clone https://github.com/rhauser/ayum.git
 
-   # as root on your machine
-   yum install yum-plugin-downloadonly
+   Note:
+      This should work out of the box on a 64bit Scientific Linux 6 system.
+      If you need it on another binary platform, got to src/rpmext and
+         make clean; make
+      You will need the boost python libraries and the rpm-devel package
+      installed for that, as well as g++.
 
-2. Edit the ayum shell script
+2. Edit the yum.conf file.
 
-   You should adapt the four variables:
+   You should adapt these variables to reflect
+   the current location of the package 
+   (these are the standard yum.conf variables):
 
-   AYUM_DBPATH
-   AYUM_INSTALL_AREA
+      persistdir=/work/msu-pc7/rhauser/ayum/var/lib/yum
+      reposdir=/work/msu-pc7/rhauser/ayum/etc/yum.repos.d
+      pluginpath=/usr/share/yum-plugins,/usr/lib/yum-plugins,/work/msu-pc7/rhauser/ayum/src/yum-plugins
+      pluginconfpath=/etc/yum/pluginconf.d,/work/msu-pc7/rhauser/ayum/etc/yum/pluginconf.d
 
-   Optionally: AYUM_CACHE or the ./cache subdirectory
-   is used instead.
+   You should modify these non-standard variables to point to the RPM database
+   and your software installation area:
 
-   Optionally: AYUM_CONF or just use the yum.conf file
-   in the package and modify it as you like.
+     dbpath=/work/msu-pc7/rhauser/install/db
+     prefix=/work/msu-pc7/rhauser/install/sw
 
 3. Either put the package into your path:
  
-   export PATH=/path/to/ayum:$PATH
+     export PATH=/path/to/ayum:$PATH
+
+   or use an alias
+  
+     alias ayum=/path/to/ayum
 
    or use the full path name in the following where the 'ayum'
    command is used.
@@ -39,5 +51,50 @@
 
    ayum remove tdaq-04-00-01-*
 
-
    
+##########################################################################################
+
+This patched yum version solves the following problems when installing
+RPMs to a private area as non-root user:
+
+   1. yum does not allow a non-root user to execute install,update,erase
+   2. yum has to way to specify a different RPM database except
+      for installroot, which is not what we want.
+   3. yum has no interface for the --prefix or --relocate option of rpm
+
+Problem 1 is solved by having a private version of the yum-cli/yumcommands.py file that
+removes the check for non-root user. In addition a private version of the main yum
+command is needed to make sure it refers to the local src/yum-cli area first when
+loading files. The actual changes are 1 and 3 lines rsp.
+
+Problem 2 is solved by a yum plugin in src/yum-plugins/dbpath.py that defines two new
+options (dbpath and prefix). It defines the _dbpath macro internally to refer to the
+new RPM db location.
+
+Problem 3 is the hardest, since the rpm python bindings do not forsee the parameters
+needed for the relocation. Furthermore the python bindings define extension types
+that are completely private to the rpm package and are not visible in any normal
+rpm header file.
+
+It is solved in the following way:
+
+    - src/rpmext/install.cxx defines a new binding to the rpmtsAddInstallElement()
+      C function and supports two new parameters (oldpath, newpath). It passes these
+      parameters as relocation information.
+
+      Access to the internal RPM structures is done by replicating the corresponding
+      structures locally and a couragous reinterpret_cast<...>.
+
+   - in src/rpmext/__init__ a new addInstall() function that mimics rpm.TransactionSet.addInstall()
+     but supports an additional prefix=...  parameter. 
+
+   - src/yum/depsolve.py contains a patched local copy of the corresponding yum file that
+     - overrides rpm.TransactionSet.addInstall with our own rpmext.addInstall method.
+     -  checks if the 'prefix' option in yum.conf was set, and if yes, reads the first
+        of the package's prefixes from the header and passes it to ts.addInstall()
+        The changes to depsolve.py are 6 lines.
+
+   - ayum is a simple wrapper that sets PYTHONPATH accordingly and uses the local yum.conf
+     as the default configuration file.
+
+The changes are against: yum-3.2.29-40
