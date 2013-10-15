@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Wrapper around yum --downloadonly plus rpm with private database
+# Wrapper around modified yum 
 #
 
 # automatic
@@ -9,80 +9,11 @@ export AYUM_DIR=`python -c "from os.path import abspath, dirname; print dirname(
 # ###################
 # Configuration
 # ###################
-#
-# All the following paths can be in completely separate locations
-# if necessary.
-#
-
-#
-# The private RPM database location
-#
-export AYUM_DBPATH=/work/msu-pc7/rhauser/install/db
-
-# Software installation area
-export AYUM_INSTALL_AREA=/work/msu-pc7/rhauser/install/sw
-
-# The download cache directory, inside the ayum directory by default
-export AYUM_CACHE=$AYUM_DIR/cache
 
 # The yum.conf file, take the one from this package by default
 export AYUM_CONF=$AYUM_DIR/yum.conf
 
-RPM_OPTIONS=""
+export PYTHONPATH=$AYM_DIR/src:$PYTHONPATH
 
-for arg in $*
-do
-    case $arg in
-        install)
-            RPM_OPTIONS=-ihv
-            break
-            ;;
-        update)
-            RPM_OPTIONS=-Uhv
-            break
-            ;;
-        remove|erase)
-            RPM_OPTIONS=-e
-            break
-            ;;
-        shell)
-            echo "The 'ayum shell' command will not work properly"
-            exit 1
-            ;;
-        *)
-            ;;
-    esac
-done
-
-rm -f $AYUM_CACHE/*
-
-AYUM_OUT=`mktemp`
-
-case "${RPM_OPTIONS}" in
-    -e)
-        # we only need the output in the case of the erase command
-        $AYUM_DIR/yum.private -c $AYUM_CONF --downloadonly --downloaddir=$AYUM_CACHE $* | tee $AYUM_OUT
-        ;;
-    *)
-        # in the other cases having terminal control is more useful
-        $AYUM_DIR/yum.private -c $AYUM_CONF --downloadonly --downloaddir=$AYUM_CACHE $*
-esac
-
-trap 'rm -f $AYUM_OUT' 0
-
-case "${RPM_OPTIONS}" in
-    "")
-        # nothing to do
-        ;;
-    -e*)
-        # erase
-        rpm --dbpath  $AYUM_DBPATH ${RPM_OPTIONS} $(grep '\--->' $AYUM_OUT | awk '{ print $3; }')
-        ;;
-    *)
-        # install or update
-        if [ ! -z `/bin/ls $AYUM_CACHE | head -1` ]
-        then
-            rpm --dbpath $AYUM_DBPATH --prefix=$AYUM_INSTALL_AREA $RPM_OPTIONS $AYUM_CACHE/*
-        fi
-        ;;
-esac
+# new
+$AYUM_DIR/src/yum.private -c $AYUM_CONF  $*

@@ -22,4 +22,5 @@ def init_hook(conduit):
     if dbpath != '':
       from rpm import addMacro
       addMacro('_dbpath',dbpath)
-    
+
+    print conf.cachedir
