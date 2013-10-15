@@ -18,8 +18,8 @@
 
       persistdir=/work/msu-pc7/rhauser/ayum/var/lib/yum
       reposdir=/work/msu-pc7/rhauser/ayum/etc/yum.repos.d
-      pluginpath=/usr/share/yum-plugins,/usr/lib/yum-plugins,/work/msu-pc7/rhauser/ayum/src/yum-plugins
-      pluginconfpath=/etc/yum/pluginconf.d,/work/msu-pc7/rhauser/ayum/etc/yum/pluginconf.d
+      pluginpath=/work/msu-pc7/rhauser/ayum/src/yum-plugins
+      pluginconfpath=/work/msu-pc7/rhauser/ayum/etc/yum/pluginconf.d
 
    You should modify these non-standard variables to point to the RPM database
    and your software installation area:
