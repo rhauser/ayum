@@ -5,10 +5,15 @@ from rpm._rpm import ts as _rpmts
 
 #
 # This will be used to override rpm.transaction.TransactionSet.addInstall()
-# Depending on the the 'prefix' argument it will either call the original
+# Depending on the the 'relocs' argument it will either call the original
 # version, or the new version from _rpmext.
 #
-def addInstall(self, item, key, how='u', prefix = None):
+# 'relocs' can be single string, in which case it is assumed to be a 
+# new prefix and the oldpath is taken from the package header prefix,
+# or 'relocs' can be a list, in which case it must contain 2-tuples of strings
+# representing (oldpath, newpath) pairs.
+#
+def addInstall(self, item, key, how='u', relocs = None):
 
     if isinstance(item, str):
         f = file(item)
@@ -24,13 +29,24 @@ def addInstall(self, item, key, how='u', prefix = None):
 
     upgrade = (how == "u")
 
-    if prefix and prefix != '':
-        prefixes = header['prefixes']
-        if len(prefixes) > 0:
-            oldpath = prefixes[0]
-            if not _rpmext.addInstall(self, header, key, upgrade, oldpath, prefix):
-                raise rpm.error("adding package to transaction failed")
-            return
+    if relocs:
+        if type(relocs) == str:
+            prefixes = header['prefixes']
+            if relocs == '':
+                relocs = []
+            elif len(prefixes) > 0:
+                relocs = [(prefixes[0], relocs)]
+            else:
+                raise ValueError('prefix given, but package is not relocatable')
+
+        elif type(relocs) != list:
+            raise ValueError("relocs argument must be either a string or a list");
+
+        print "relocations:",relocs
+
+        if not _rpmext.addInstall(self, header, key, upgrade, relocs):
+            raise rpm.error("adding package to transaction failed")
+        return
 
     if not _rpmts.addInstall(self, header, key, upgrade):
         raise rpm.error("adding package to transaction failed")

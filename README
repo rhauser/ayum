@@ -7,8 +7,7 @@
       This should work out of the box on a 64bit Scientific Linux 6 system.
       If you need it on another binary platform, got to src/rpmext and
          make clean; make
-      You will need the boost python libraries and the rpm-devel package
-      installed for that, as well as g++.
+      You will need the rpm-devel package installed for that.
 
 2. Edit the yum.conf file.
 
@@ -78,20 +77,22 @@ rpm header file.
 
 It is solved in the following way:
 
-    - src/rpmext/install.cxx defines a new binding to the rpmtsAddInstallElement()
-      C function and supports two new parameters (oldpath, newpath). It passes these
-      parameters as relocation information.
+    - src/rpmext/install.c defines a new binding to the rpmtsAddInstallElement()
+      C function and supports a new parameter (a list of 2-tuples of strings). 
+      It passes these parameters as relocation information.
 
       Access to the internal RPM structures is done by replicating the corresponding
       structures locally and a couragous reinterpret_cast<...>.
 
    - in src/rpmext/__init__ a new addInstall() function that mimics rpm.TransactionSet.addInstall()
-     but supports an additional prefix=...  parameter. 
+     but supports an additional parameter that can be either a single string (interpreted
+     as 'prefix' option), or a list 2-tuples of strings (interpreted as a list of relocation
+     options)
 
    - src/yum/depsolve.py contains a patched local copy of the corresponding yum file that
       - overrides rpm.TransactionSet.addInstall with our own rpmext.addInstall method.
-      - checks if the 'prefix' option in yum.conf was set, and if yes, reads the first
-        of the package's prefixes from the header and passes it to ts.addInstall()
+      - checks if the 'prefix' option in yum.conf was set, and if yes,
+        passes it to ts.addInstall()
         The changes to depsolve.py are 6 lines.
 
    - ayum is a simple wrapper that sets PYTHONPATH accordingly and uses the local yum.conf
