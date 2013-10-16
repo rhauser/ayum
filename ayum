@@ -16,4 +16,4 @@ export AYUM_CONF=$AYUM_DIR/yum.conf
 export PYTHONPATH=$AYM_DIR/src:$PYTHONPATH
 
 # new
-$AYUM_DIR/src/yum.private -c $AYUM_CONF  $*
+$AYUM_DIR/src/yum.private -c $AYUM_CONF  "$@"

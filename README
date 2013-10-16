@@ -58,7 +58,7 @@ This patched yum version solves the following problems when installing
 RPMs to a private area as non-root user:
 
    1. yum does not allow a non-root user to execute install,update,erase
-   2. yum has to way to specify a different RPM database except
+   2. yum has no way to specify a different RPM database except
       for installroot, which is not what we want.
    3. yum has no interface for the --prefix or --relocate option of rpm
 
@@ -89,8 +89,8 @@ It is solved in the following way:
      but supports an additional prefix=...  parameter. 
 
    - src/yum/depsolve.py contains a patched local copy of the corresponding yum file that
-     - overrides rpm.TransactionSet.addInstall with our own rpmext.addInstall method.
-     -  checks if the 'prefix' option in yum.conf was set, and if yes, reads the first
+      - overrides rpm.TransactionSet.addInstall with our own rpmext.addInstall method.
+      - checks if the 'prefix' option in yum.conf was set, and if yes, reads the first
         of the package's prefixes from the header and passes it to ts.addInstall()
         The changes to depsolve.py are 6 lines.
 
