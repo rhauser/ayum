@@ -42,8 +42,6 @@ def addInstall(self, item, key, how='u', relocs = None):
         elif type(relocs) != list:
             raise ValueError("relocs argument must be either a string or a list");
 
-        print "relocations:",relocs
-
         if not _rpmext.addInstall(self, header, key, upgrade, relocs):
             raise rpm.error("adding package to transaction failed")
         return
