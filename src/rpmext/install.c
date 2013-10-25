@@ -1,5 +1,6 @@
 
 #include <Python.h>
+#include <rpm/rpmlib.h>
 #include <rpm/rpmfi.h>
 #include <rpm/rpmts.h>
 
@@ -47,8 +48,8 @@ rpmts_AddInstall(PyObject *self, PyObject * args)
     h = ((hdrObject *)header)->h;
 
     if(relocations && relocations != Py_None) {
-        Py_ssize_t list_size;
-        Py_ssize_t i;
+        ssize_t list_size;
+        ssize_t i;
 
         if(!PyList_Check(relocations)) {
 	    PyErr_SetString(PyExc_TypeError, "expected a list for relocations");
