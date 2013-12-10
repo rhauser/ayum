@@ -23,3 +23,8 @@ enabled=1
 name=dqm-common
 baseurl=http://atlas-tdaq-sw.web.cern.ch/atlas-tdaq-sw/yum/dqm-common/slc6
 enabled=1
+[tdaq-slc6]
+name=TDAQ releases
+baseurl=http://atlas-tdaq-sw.web.cern.ch/atlas-tdaq-sw/yum/tdaq/slc6
+enabled=1
+
