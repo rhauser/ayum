@@ -27,4 +27,7 @@ enabled=1
 name=TDAQ releases
 baseurl=http://atlas-tdaq-sw.web.cern.ch/atlas-tdaq-sw/yum/tdaq/slc6
 enabled=1
+[external]
+name=external sw
+baseurl=http://atlas-tdaq-sw.web.cern.ch/atlas-tdaq-sw/yum/external
 
