@@ -50,6 +50,11 @@
 
    ayum remove tdaq-04-00-01-*
 
+5. Licensing
+
+   This software uses source code from yum, it comes with the same GPL2 license
+   (see COPYING).
+
    
 ##########################################################################################
 
