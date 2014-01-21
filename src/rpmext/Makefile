@@ -1,5 +1,5 @@
 #
-# You will need the boost python library and the rpm-devel package to compile this.
+# You will need the rpm-devel package to compile this.
 #
 
 PYTHON_VERSION:=$(shell python -V 2>&1  | cut -d' ' -f2 | cut -d. -f1,2)
