@@ -9,7 +9,14 @@
          make clean; make
       You will need the rpm-devel package installed for that.
 
-2. Edit the yum.conf file.
+2. Configure ayum
+
+   Run the 'configure.ayum' script in the top level directory.
+   Answer the two questions about where to put the private RPM database
+   and where to install the software. The script will update the
+   yum.conf file used by ayum.
+
+   Alternatively you can modify the yum.conf file by hand:
 
    You should adapt these variables to reflect
    the current location of the package 

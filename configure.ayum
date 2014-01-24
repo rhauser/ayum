@@ -1,0 +1,13 @@
+#!/bin/bash
+AYUM_PATH=$(dirname $(readlink -f $0))
+echo "AYUM package location: ${AYUM_PATH}"
+echo -n "AYUM RPM database location: "
+read AYUM_RPMDB_PATH
+echo -n "AYUM software installation location: "
+read AYUM_INSTALL_PATH
+
+if [ -f ${AYUM_PATH}/yum.conf ]; then
+   mv ${AYUM_PATH}/yum.conf ${AYUM_PATH}/yum.conf.confsave || exit 1
+fi
+
+sed -e "s;%AYUM_PATH%;${AYUM_PATH};" -e "s;%AYUM_RPMDB_PATH%;${AYUM_RPMDB_PATH};"  -e  "s;%AYUM_INSTALL_PATH%;${AYUM_INSTALL_PATH};" ${AYUM_PATH}/yum.conf.template > ${AYUM_PATH}/yum.conf

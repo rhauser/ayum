@@ -1,0 +1,23 @@
+
+[main]
+exactarch=0
+gpgcheck=0
+plugins=1
+tolerant=1
+
+# List of repositories
+reposdir=%AYUM_PATH%/etc/yum.repos.d
+
+# YUM internal area
+persistdir=%AYUM_PATH%/var/lib/yum
+
+# Private plugin path, avoid system plugins
+pluginpath=%AYUM_PATH%/src/yum-plugins
+pluginconfpath=%AYUM_PATH%/etc/yum/pluginconf.d
+
+# Path to private RPM repository (--dbpath option to RPM)
+dbpath=%AYUM_RPMDB_PATH%
+
+# Path to software install area (--prefix option to RPM)
+prefix=%AYUM_INSTALL_PATH%
+
