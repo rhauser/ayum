@@ -1,23 +1,48 @@
 #!/bin/bash
+
+while getopts "hi:d:c:" OPT
+do
+    case ${OPT} in
+        i)
+            AYUM_INSTALL_PATH=${OPTARG}
+            ;;
+        d)
+            AYUM_RPMDB_PATH=${OPTARG}
+            ;;
+        c)
+            AYUM_CACHE_PATH=${OPTARG}
+            ;;
+        ?)
+            echo "usage: $0 [ -i <install_area>] [ -d dbpath ] [ -c cachedir ]"
+            exit 1
+    esac
+done
+
 AYUM_PATH=$(dirname $(readlink -f $0))
 echo "AYUM package location: ${AYUM_PATH}"
 
-echo -n "AYUM software installation location: "
-read AYUM_INSTALL_PATH
-
-AYUM_RPMDB_PATH=${AYUM_INSTALL_PATH}/.rpmdb
-
-echo -n "AYUM RPM database location: [${AYUM_RPMDB_PATH}] "
-read p
-if [ ! -z "${p}" ]; then
-    AYUM_RPMDB_PATH="${p}"
+if [ -z "${AYUM_INSTALL_PATH}" ]; then
+    echo -n "AYUM software installation location: "
+    read AYUM_INSTALL_PATH
 fi
 
-AYUM_CACHE_PATH=${AYUM_INSTALL_PATH}/.yumcache
-echo -n "AYUM cache location: [${AYUM_CACHE_PATH}] "
-read p
-if [ ! -z "${p}" ]; then
-    AYUM_CACHE_PATH="${p}"
+if [ -z "${AYUM_RPMDB_PATH}" ]; then
+    AYUM_RPMDB_PATH=${AYUM_INSTALL_PATH}/.rpmdb
+
+    echo -n "AYUM RPM database location: [${AYUM_RPMDB_PATH}] "
+    read p
+    if [ ! -z "${p}" ]; then
+        AYUM_RPMDB_PATH="${p}"
+    fi
+fi
+
+if [ -z "${AYUM_CACHE_PATH}" ]; then
+    AYUM_CACHE_PATH=${AYUM_INSTALL_PATH}/.yumcache
+    echo -n "AYUM cache location: [${AYUM_CACHE_PATH}] "
+    read p
+    if [ ! -z "${p}" ]; then
+        AYUM_CACHE_PATH="${p}"
+    fi
 fi
 
 if [ -f ${AYUM_PATH}/yum.conf ]; then
