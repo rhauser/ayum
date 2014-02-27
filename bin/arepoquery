@@ -1,0 +1,1 @@
+repoquery -c ${AYUM_PATH}/yum.conf $*
