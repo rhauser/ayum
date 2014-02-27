@@ -21,3 +21,5 @@ dbpath=%AYUM_RPMDB_PATH%
 # Path to software install area (--prefix option to RPM)
 prefix=%AYUM_INSTALL_PATH%
 
+# Path to AYUM specific cache directory
+cachedir=%AYUM_CACHE_PATH%

@@ -5181,7 +5181,7 @@ much more problems).
         ''' Set a new cache dir, using misc.getCacheDir() and var. replace
             on suffix. '''
 
-        if not force and os.geteuid() == 0:
+        if not force:
             return True # We are root, not forced, so happy with the global dir.
         if tmpdir is None:
             tmpdir = os.getenv('TMPDIR')
