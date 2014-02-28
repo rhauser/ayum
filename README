@@ -12,9 +12,9 @@
 2. Configure ayum
 
    Run the 'configure.ayum' script in the top level directory.
-   Answer the two questions about where to put the private RPM database
-   and where to install the software. The script will update the
-   yum.conf file used by ayum.
+   Answer the questions about where to put the private RPM database,
+   where to locate the yum cachen and where to install the software. 
+   The script will update the  yum.conf file used by ayum.
 
    Alternatively you can modify the yum.conf file by hand:
 
@@ -26,6 +26,7 @@
       reposdir=/work/msu-pc7/rhauser/ayum/etc/yum.repos.d
       pluginpath=/work/msu-pc7/rhauser/ayum/src/yum-plugins
       pluginconfpath=/work/msu-pc7/rhauser/ayum/etc/yum/pluginconf.d
+      cachedir=/work/msu-pc7/rhauser/install/cache
 
    You should modify these non-standard variables to point to the RPM database
    and your software installation area:
@@ -33,16 +34,25 @@
      dbpath=/work/msu-pc7/rhauser/install/db
      prefix=/work/msu-pc7/rhauser/install/sw
 
-3. Either put the package into your path:
- 
-     export PATH=/path/to/ayum:$PATH
+3. Source the setup.sh script inside the package.
 
-   or use an alias
-  
-     alias ayum=/path/to/ayum
+   It will add an alias 'ayum' and modify your path
+   to include the ayum/bin directory with wrapper scripts
+   for additional standard tools that will use the custom
+   yum and RPM database.
 
-   or use the full path name in the following where the 'ayum'
-   command is used.
+     source ./setup.sh
+
+   If you just need 'ayum' itself, you can also just define
+   and alias by hand.
+
+     alias ayum=`pwd`/ayum
+
+   The additional tools all start with an 'a' before their
+   normal name. At the moment there are:
+
+      ayum/bin/arpm       - the RPM command with modified database
+      ayum/bin/arepoquery - the repoquery command
 
 4. Enjoy
 
