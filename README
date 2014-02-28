@@ -44,7 +44,7 @@
      source ./setup.sh
 
    If you just need 'ayum' itself, you can also just define
-   and alias by hand.
+   an alias by hand.
 
      alias ayum=`pwd`/ayum
 
