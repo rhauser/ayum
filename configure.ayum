@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts "hi:d:c:" OPT
+while getopts "hi:d:c:o:" OPT
 do
     case ${OPT} in
         i)
@@ -12,8 +12,11 @@ do
         c)
             AYUM_CACHE_PATH=${OPTARG}
             ;;
+        o)
+	    AYUM_CONF_PATH=${OPTARG}
+	    ;;
         ?)
-            echo "usage: $0 [ -i <install_area>] [ -d dbpath ] [ -c cachedir ]"
+            echo "usage: $0 [ -i <install_area>] [ -d dbpath ] [ -c cachedir ] [-o path/to/yum.conf ]"
             exit 1
     esac
 done
@@ -45,10 +48,15 @@ if [ -z "${AYUM_CACHE_PATH}" ]; then
     fi
 fi
 
-if [ -f ${AYUM_PATH}/yum.conf ]; then
-   mv ${AYUM_PATH}/yum.conf ${AYUM_PATH}/yum.conf.confsave || exit 1
+if [ -z "${AYUM_CONF_PATH}" ]
+then
+   AYUM_CONF_PATH=${AYUM_PATH}/yum.conf
 fi
 
-sed  -e "s;%AYUM_PATH%;${AYUM_PATH};" -e "s;%AYUM_RPMDB_PATH%;${AYUM_RPMDB_PATH};"  -e  "s;%AYUM_INSTALL_PATH%;${AYUM_INSTALL_PATH};" -e "s;%AYUM_CACHE_PATH%;${AYUM_CACHE_PATH};" ${AYUM_PATH}/yum.conf.template > ${AYUM_PATH}/yum.conf
+if [ -f ${AYUM_CONF_PATH} ]; then
+   mv ${AYUM_CONF_PATH} $(dirname ${AYUM_CONF_PATH})/yum.conf.confsave || exit 1
+fi
 
-cat ${AYUM_PATH}/yum.conf
+sed  -e "s;%AYUM_PATH%;${AYUM_PATH};" -e "s;%AYUM_RPMDB_PATH%;${AYUM_RPMDB_PATH};"  -e  "s;%AYUM_INSTALL_PATH%;${AYUM_INSTALL_PATH};" -e "s;%AYUM_CACHE_PATH%;${AYUM_CACHE_PATH};" ${AYUM_PATH}/yum.conf.template > ${AYUM_CONF_PATH}
+
+cat ${AYUM_CONF_PATH}
