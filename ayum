@@ -10,8 +10,17 @@ export AYUM_DIR=`python -c "from os.path import abspath, dirname; print dirname(
 # Configuration
 # ###################
 
-# The yum.conf file, take the one from this package by default
-export AYUM_CONF=$AYUM_DIR/yum.conf
+# If there happens to be a local ayum.conf, use that
+# This is to support the multiple repositories for ATLAS off-line
+
+if [ -f ayum.conf ]
+then
+  export AYUM_CONF=${AYUM_CONF:=`pwd`/ayum.conf}
+else
+  # The yum.conf file, take the one from this package by default
+  # if not already defined in environment.
+  export AYUM_CONF=${AYUM_CONF:=$AYUM_DIR/yum.conf}
+fi
 
 export PYTHONPATH=$AYM_DIR/src:$PYTHONPATH
 

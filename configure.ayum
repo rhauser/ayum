@@ -1,6 +1,8 @@
 #!/bin/bash
 
-while getopts "hi:d:c:o:" OPT
+AYUM_PATH=$(dirname $(readlink -f $0))
+
+while getopts "hDi:d:c:o:" OPT
 do
     case ${OPT} in
         i)
@@ -15,46 +17,71 @@ do
         o)
 	    AYUM_CONF_PATH=${OPTARG}
 	    ;;
+	D)
+	    AYUM_USE_DEFAULTS=1
+	    ;;
         ?)
-            echo "usage: $0 [ -i <install_area>] [ -d dbpath ] [ -c cachedir ] [-o path/to/yum.conf ]"
+            echo "usage: $0 [ -i <installpath>] [ -d dbpath ] [ -c cachedir ] [-o path/to/yum.conf ] [-d]"
+	    echo "       -i installpath     Specify installation area for software (no default)"
+            echo "       -d dbpath          Specify RPM DB location (default: installpath/.rpmdb)"
+	    echo "       -c cachedir        Specify YUM cach location (default: installpath/.yumcache"
+            echo "       -o yum.conf        Specify path and name of yum.conf output file (default: ${AYUM_PATH}/yum.conf"
+            echo "       -D                 Use defaults for dbpath and cachedir (ATLAS conventions)"
+            echo "       -h                 Show this help"
             exit 1
     esac
 done
 
-AYUM_PATH=$(dirname $(readlink -f $0))
 echo "AYUM package location: ${AYUM_PATH}"
 
 if [ -z "${AYUM_INSTALL_PATH}" ]; then
-    echo -n "AYUM software installation location: "
-    read AYUM_INSTALL_PATH
+    if [ -z "${AYUM_USE_DEFAULTS}" ]
+    then
+        echo -n "AYUM software installation location: "
+        read AYUM_INSTALL_PATH
+    else
+        AYUM_INSTALL_PATH=`pwd`
+    fi
 fi
 
 if [ -z "${AYUM_RPMDB_PATH}" ]; then
     AYUM_RPMDB_PATH=${AYUM_INSTALL_PATH}/.rpmdb
 
-    echo -n "AYUM RPM database location: [${AYUM_RPMDB_PATH}] "
-    read p
-    if [ ! -z "${p}" ]; then
-        AYUM_RPMDB_PATH="${p}"
+    if [ -z "${AYUM_USE_DEFAULTS}" ]
+    then
+        echo -n "AYUM RPM database location: [${AYUM_RPMDB_PATH}] "
+        read p
+        if [ ! -z "${p}" ]; then
+            AYUM_RPMDB_PATH="${p}"
+        fi
     fi
 fi
 
 if [ -z "${AYUM_CACHE_PATH}" ]; then
     AYUM_CACHE_PATH=${AYUM_INSTALL_PATH}/.yumcache
-    echo -n "AYUM cache location: [${AYUM_CACHE_PATH}] "
-    read p
-    if [ ! -z "${p}" ]; then
-        AYUM_CACHE_PATH="${p}"
+
+    if [ -z "${AYUM_USE_DEFAULTS}" ]
+    then
+        echo -n "AYUM cache location: [${AYUM_CACHE_PATH}] "
+        read p
+        if [ ! -z "${p}" ]; then
+            AYUM_CACHE_PATH="${p}"
+        fi
     fi
 fi
 
 if [ -z "${AYUM_CONF_PATH}" ]
 then
-   AYUM_CONF_PATH=${AYUM_PATH}/yum.conf
+   if [ -z "${AYUM_USE_DEFAULTS}" ]
+   then
+      AYUM_CONF_PATH=${AYUM_PATH}/yum.conf
+   else
+      AYUM_CONF_PATH=`pwd`/ayum.conf
+   fi
 fi
 
 if [ -f ${AYUM_CONF_PATH} ]; then
-   mv ${AYUM_CONF_PATH} $(dirname ${AYUM_CONF_PATH})/yum.conf.confsave || exit 1
+   mv ${AYUM_CONF_PATH} ${AYUM_CONF_PATH}.confsave || exit 1
 fi
 
 sed  -e "s;%AYUM_PATH%;${AYUM_PATH};" -e "s;%AYUM_RPMDB_PATH%;${AYUM_RPMDB_PATH};"  -e  "s;%AYUM_INSTALL_PATH%;${AYUM_INSTALL_PATH};" -e "s;%AYUM_CACHE_PATH%;${AYUM_CACHE_PATH};" ${AYUM_PATH}/yum.conf.template > ${AYUM_CONF_PATH}
