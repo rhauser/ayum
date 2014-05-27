@@ -15,5 +15,16 @@ export AYUM_CONF=$AYUM_DIR/yum.conf
 
 export PYTHONPATH=$AYM_DIR/src:$PYTHONPATH
 
+AYUM_ARGS="$@"
+
+while [ $# -gt 0 ]
+do
+   if [ "$1" = "-c" ]
+   then
+       AYUM_CONF=$2
+   fi
+   shift
+done
+
 # new
-$AYUM_DIR/src/yum.private -c $AYUM_CONF  "$@"
+$AYUM_DIR/src/yum.private -c $AYUM_CONF  $AYUM_ARGS
