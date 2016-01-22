@@ -85,5 +85,6 @@ if [ -f ${AYUM_CONF_PATH} ]; then
 fi
 
 sed  -e "s;%AYUM_PATH%;${AYUM_PATH};" -e "s;%AYUM_RPMDB_PATH%;${AYUM_RPMDB_PATH};"  -e  "s;%AYUM_INSTALL_PATH%;${AYUM_INSTALL_PATH};" -e "s;%AYUM_CACHE_PATH%;${AYUM_CACHE_PATH};" ${AYUM_PATH}/yum.conf.template > ${AYUM_CONF_PATH}
+sed  -i -e "s;%AYUM_PATH%;${AYUM_PATH};" -e "s;%AYUM_RPMDB_PATH%;${AYUM_RPMDB_PATH};"  -e  "s;%AYUM_INSTALL_PATH%;${AYUM_INSTALL_PATH};" -e "s;%AYUM_CACHE_PATH%;${AYUM_CACHE_PATH};" ${AYUM_PATH}/etc/yum.repos.d/*.repo
 
 cat ${AYUM_CONF_PATH}
