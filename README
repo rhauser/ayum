@@ -3,6 +3,10 @@
 
    git clone https://github.com/rhauser/ayum.git
 
+     or
+ 
+   git clone https://gitlab.cern.ch/rhauser/ayum.git 
+
    Note:
       This should work out of the box on a 64bit Scientific Linux 6 system.
       If you need it on another binary platform, got to src/rpmext and
@@ -33,6 +37,9 @@
 
      dbpath=/work/msu-pc7/rhauser/install/db
      prefix=/work/msu-pc7/rhauser/install/sw
+
+   You can also specify the 'prefix' variable in a yum repository, it will
+   then take priority over the global value for packages from this repository.
 
 3. Source the setup.sh script inside the package.
 

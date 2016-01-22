@@ -223,10 +223,10 @@ class Depsolve(object):
                         txmbr.ts_state = 'i'
                         txmbr.output_state = TS_INSTALL
 
-                if hasattr(self.conf,'prefix'):
-                    self.ts.addInstall(hdr, (hdr, rpmfile), txmbr.ts_state, self.conf.prefix)
-                else:
-                    self.ts.addInstall(hdr, (hdr, rpmfile), txmbr.ts_state)
+                prefix = self._repos.getRepo(txmbr.repoid).getAttribute('prefix') or getattr(self.conf, 'prefix', None)
+                print "PREFIX = ",prefix
+
+                self.ts.addInstall(hdr, (hdr, rpmfile), txmbr.ts_state, prefix)
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     _('Adding Package %s in mode %s'), txmbr.po, txmbr.ts_state)
                 if self.dsCallback:

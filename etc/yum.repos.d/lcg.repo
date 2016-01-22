@@ -1,0 +1,4 @@
+[lcg] 
+name="LCG s/w" 
+baseurl=http://atlas-tdaq-sw.web.cern.ch/atlas-tdaq-sw/yum/LCG/slc6 
+prefix=/work/msu-pc7/rhauser/install/sw/lcg
